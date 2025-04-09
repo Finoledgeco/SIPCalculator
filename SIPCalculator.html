@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #001777;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .calculator {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h2 {
+            color: #001777;
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+                .description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .option {
+            padding: 10px 15px;
+            background-color: #f1f1f1;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option.selected {
+            background-color: #001777;
+            color: white;
+        }
+        
+        .range-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calculate-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .reset-btn {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .result-container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        
+        .highlight {
+            color: #3498db;
+        }
+        .about-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>SIP CALCULATOR</h2>
+        <p class="description">Plan your wealth-building journey with the <b>Finoledge Systematic Investment Plan (SIP) Calculator</b> – an intelligent tool designed to project the potential returns on your mutual fund investments. Simply input your monthly SIP amount, expected rate of return, and investment duration to visualize your corpus growth through the power of compounding.
+Make informed investment decisions and stay on track to achieve your dreams – whether it's buying a home, funding education, or planning for retirement.</p>
+        <div class="input-group">
+            <label>Frequency of Investment:</label>
+            <div class="options-group">
+                <div class="option selected" onclick="selectOption(this, 'yearly')">Yearly</div>
+                <div class="option" onclick="selectOption(this, 'half-yearly')">Half-Yearly</div>
+                <div class="option" onclick="selectOption(this, 'quarterly')">Quarterly</div>
+                <div class="option" onclick="selectOption(this, 'monthly')">Monthly</div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="investment-amount">Yearly Investment Amount *</label>
+            <div class="input-container">
+                <input type="number" id="investment-amount" placeholder="Ex. 100000" oninput="updateSlider(this.value, 'investment-amount-slider'); calculateSIP()">
+
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="tenure">Tenure (in years) *(up to 50 years)</label>
+            <input type="number" id="tenure" min="1" max="50" placeholder="Ex. 5" oninput="calculateSIP()">
+        </div>
+        
+        <div class="input-group">
+            <label for="rate">Expected rate of return (P.A) *</label>
+            <input type="number" id="rate" step="0.1" placeholder="Ex. 12" oninput="calculateSIP()">
+        </div>
+        
+        <div class="result-container">
+            <div class="result-item">
+                <span class="result-label">Your Corpus Value:</span>
+                <span class="result-value highlight" id="corpus-value">₹ 0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Earnings:</span>
+                <span class="result-value" id="total-earnings">₹ 0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Amount Deposited:</span>
+                <span class="result-value" id="total-deposited">₹ 0</span>
+            </div>
+        </div>
+        <div class="about-section">
+            Finoledge SIP Calculator
+        </div>
+    </div>
+
+    <script>
+let investmentFrequency = 'yearly';
+
+function selectOption(element, frequency) {
+    const options = element.parentElement.querySelectorAll('.option');
+    options.forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    investmentFrequency = frequency;
+    calculateSIP();
+}
+
+function calculateSIP() {
+    const investment = parseNumberInput(document.getElementById('investment-amount').value);
+    const rate = parseNumberInput(document.getElementById('rate').value) / 100;
+    const years = parseNumberInput(document.getElementById('tenure').value);
+    
+    if (isNaN(investment) || isNaN(rate) || isNaN(years)) return;
+    
+    // Determine payments per year based on frequency
+    let paymentsPerYear, paymentAmount;
+    switch(investmentFrequency) {
+        case 'monthly':
+            paymentsPerYear = 12;
+            paymentAmount = investment; // This is the monthly investment amount
+            break;
+        case 'quarterly':
+            paymentsPerYear = 4;
+            paymentAmount = investment; // This is the quarterly investment amount
+            break;
+        case 'half-yearly':
+            paymentsPerYear = 2;
+            paymentAmount = investment; // This is the half-yearly investment amount
+            break;
+        case 'yearly':
+        default:
+            paymentsPerYear = 1;
+            paymentAmount = investment; // This is the yearly investment amount
+            break;
+    }
+    
+    const totalPayments = years * paymentsPerYear;
+    const periodicRate = rate / paymentsPerYear;
+    
+    // SIP Future Value formula
+    const corpusValue = paymentAmount * 
+                      (Math.pow(1 + periodicRate, totalPayments) - 1) / 
+                      periodicRate;
+    
+    const totalDeposited = paymentAmount * totalPayments;
+    const totalEarnings = corpusValue - totalDeposited;
+    
+    // Update results
+    document.getElementById('corpus-value').textContent = '₹ ' + formatNumberOutput(corpusValue) + 
+        ' (' + formatLakhs(corpusValue) + ' Lakhs)';
+    document.getElementById('total-earnings').textContent = '₹ ' + formatNumberOutput(totalEarnings) + 
+        ' (' + formatLakhs(totalEarnings) + ' Lakhs)';
+    document.getElementById('total-deposited').textContent = '₹ ' + formatNumberOutput(totalDeposited) + 
+        ' (' + formatLakhs(totalDeposited) + ' Lakhs)';
+}
+
+// Helper functions remain the same as previous version
+function formatNumberInput(num) {
+    return num.toString().replace(/\D/g, '');
+}
+
+function parseNumberInput(num) {
+    return parseFloat(num.toString().replace(/,/g, ''));
+}
+
+function formatNumberOutput(num) {
+    return num.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+function formatLakhs(num) {
+    return (num / 100000).toFixed(2);
+}
+
+// Initialize calculator
+window.onload = function() {
+    calculateSIP();
+};
+    </script>
+</body>
+</html>
